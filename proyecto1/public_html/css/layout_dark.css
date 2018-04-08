@@ -1,0 +1,39 @@
+@charset "utf-8";
+
+body {
+    background-color: #2C3034;
+    color: white;
+}
+
+#header {
+    height: 100px;
+    text-align:center;
+    background-color: #15171A;
+}
+
+.alignement_logo {
+    margin-left: 100px;
+    float:left;
+
+}
+
+.alignement_nom_application {
+    font-size: 30px; 
+    text-align: center; 
+    display: inline-block; 
+    margin-right:100px; 
+    margin-top: 30px;
+
+}
+
+.couleur_bootstrap { 
+    color: #337ab7;
+}
+
+.table-hover:hover tr:hover {
+    color: #323539;
+}
+
+.list-group-item {
+    background-color: #15171A;
+}

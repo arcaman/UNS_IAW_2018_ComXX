@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<evaluacion>
+    <id>1</id>
+    <nombre>proyecto 1</nombre>
+    <fecha>10/04/2018</fecha>
+    <descripcion>Proyecto para utilizar las tecnologias HTML y Javascript</descripcion>
+    <tipo>PROYECTO</tipo>
+        
+    <comision>
+        <nombre>Grupo 1</nombre>
+        <alumnos>
+            <nombre>Christopher</nombre> 
+            <apellido>GIL</apellido>
+        </alumnos>
+        
+        <alumnos>
+            <nombre>Henry</nombre> 
+            <apellido>DAL</apellido>
+        </alumnos>
+        
+        <alumnos>
+            <nombre>Ari</nombre> 
+            <apellido>IEME</apellido>
+        </alumnos>
+        
+        <listacriterios>
+            <criterio>
+                <nombre>Presentacion</nombre>
+                <nota>3</nota>
+            </criterio>
+        
+            <criterio>
+                <nombre>Implementa 2 estilos</nombre>
+                <nota>2</nota>
+            </criterio>
+        
+            <criterio>
+                <nombre>HTML valido</nombre>
+                <nota>2</nota>
+            </criterio>
+        
+        </listacriterios>
+        
+    </comision>
+    
+    
+    <comision>
+        <nombre>Grupo 2</nombre>
+        <alumnos>
+            <nombre>Javier</nombre> 
+            <apellido>SERTI</apellido>
+        </alumnos>
+        
+        <listacriterios>
+            <criterio>
+                <nombre>Presentacion</nombre>
+                <nota>1</nota>
+            </criterio>
+        
+            <criterio>
+                <nombre>Implementa 2 estilos</nombre>
+                <nota>4</nota>
+            </criterio>
+        
+            <criterio>
+                <nombre>HTML valido</nombre>
+                <nota>5</nota>
+            </criterio>
+        
+        </listacriterios>
+        
+    </comision>
+    
+    <comision>
+        <nombre>Grupo 3</nombre>
+        <alumnos>
+            <nombre>Javier</nombre> 
+            <apellido>SERTI</apellido>
+        </alumnos>
+        
+        <alumnos>
+            <nombre>Didier</nombre> 
+            <apellido>BLANCHARD</apellido>
+        </alumnos>
+        
+        <alumnos>
+            <nombre>Antonio</nombre> 
+            <apellido>MERTI</apellido>
+        </alumnos>
+        
+        <listacriterios>
+            <criterio>
+                <nombre>Presentacion</nombre>
+                <nota>4</nota>
+            </criterio>
+        
+            <criterio>
+                <nombre>Implementa 2 estilos</nombre>
+                <nota>5</nota>
+            </criterio>
+        
+            <criterio>
+                <nombre>HTML valido</nombre>
+                <nota>3</nota>
+            </criterio>
+        
+        </listacriterios>
+        
+    </comision>
+</evaluacion>
