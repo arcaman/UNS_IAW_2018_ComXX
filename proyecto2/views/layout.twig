@@ -29,6 +29,16 @@
 
             <span id="nom_application" class="alignement_nom_application">Mark managing</span>
 
+            <span id="bloc_connexion_deconnexion" class="alignement_connexion_deconnexion">
+                {% if user is not defined %}
+                    Login or Register with:
+                    <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google</a>
+                {% else %}    
+                    <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+
+                {% endif %}
+            </span>
+
         </div>
 
         <div id="fenetre_principale" class="col-md-12">
@@ -36,7 +46,7 @@
             <div class="col-md-3 panel-body">
                 <div class="list-group">
 
-                    <a class="list-group-item" href="index.html">
+                    <a class="list-group-item" href="/">
                         <span class="couleur_bootstrap">Accueil
                         </span>
                     </a>
@@ -46,7 +56,7 @@
                         </span>
                     </a>
 
-                    <a class="list-group-item" href="estilo.html">
+                    <a class="list-group-item" href="/estilo">
                         <span class="couleur_bootstrap">Estilos
                         </span>
                     </a>

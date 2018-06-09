@@ -4,17 +4,21 @@ module.exports = function(app, passport) {
 
     // route for home page
     app.get('/', function(req, res) {
-        res.render('index.twig'); // load the index.ejs file
+        res.render('index.twig', {
+            user : req.user // get the user out of session and pass to template
+        });
     });
-
-    // route for login form
-    // route for processing the login form
-    // route for signup form
-    // route for processing the signup form
 
     // route for showing the profile page
     app.get('/profile', isLoggedIn, function(req, res) {
         res.render('profile.twig', {
+            user : req.user // get the user out of session and pass to template
+        });
+    });
+    
+    // route para menejar los estilos por el usario
+    app.get('/estilo', isLoggedIn, function(req, res) {
+        res.render('estilo.twig', {
             user : req.user // get the user out of session and pass to template
         });
     });

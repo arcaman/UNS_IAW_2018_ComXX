@@ -26,6 +26,13 @@ body {
 
 }
 
+.alignement_connexion_deconnexion {
+    margin-top: 30px;
+    margin-right: 100px;
+    float:right;
+
+}
+
 .couleur_bootstrap { 
     color: #337ab7;
 }
