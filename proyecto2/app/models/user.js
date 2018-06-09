@@ -7,7 +7,8 @@ var bcrypt   = require('bcrypt-nodejs');
 var userSchema = mongoose.Schema({
 
     local            : {
-        type_user    : String, //ADMIN, EVAL o ALUMNO
+        type_user    : { type: String, default: 'ALUMNO'},//ADMIN, EVAL o ALUMNO
+        layout       : { type : String, default: 'layout_clair.css'},
     },
     facebook         : {
         id           : String,

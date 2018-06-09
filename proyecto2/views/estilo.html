@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Proyecto 1</title>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    </head>
+
+    <body onload="loadXMLCss()">
+        <div id="header">
+            <img id="bloc_image_test" 
+                 src="images/uns.png" 
+                 height="95px" width="95px" alt="uns" class="alignement_logo"
+                 />
+
+            <span id="nom_application" class="alignement_nom_application">Mark managing</span>
+
+        </div>
+
+        <div id="fenetre_principale" class="col-md-12">
+
+            <div class="col-md-3 panel-body">
+                <div class="list-group">
+
+                    <a class="list-group-item" href="index.html">
+                        <span class="couleur_bootstrap">Accueil
+                        </span>
+                    </a>
+
+                    <a class="list-group-item" href="evaluation.html">
+                        <span class="couleur_bootstrap">Evaluacion
+                        </span>
+                    </a>
+                    
+                    <a class="list-group-item" href="estilo.html">
+                        <span class="couleur_bootstrap">Estilos
+                        </span>
+                    </a>
+
+
+                </div>
+            </div>
+
+            <div id="page_principale" class="col-md-8 panel-body">
+                <button type="button" class="btn btn-info" onclick="changeStyle('css/layout_clair.css', 'css/layout_dark.css')">Estilo claro</button>
+                <button type="button" class="btn btn-primary" onclick="changeStyle('css/layout_dark.css', 'css/layout_clair.css')">Estilo oscuro</button>
+                
+            </div>
+        </div>
+        <script src="js/layout.js"></script>
+        <script src="js/jquery-3.3.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+    </body>
+</html>
