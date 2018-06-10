@@ -85,7 +85,13 @@ function loadCss(xml) {
     $('head').append('<link rel="stylesheet" type="text/css" href="' + x[0].getElementsByTagName("css")[0].childNodes[0].nodeValue + '">');
 }
 
-function changeStyle(nameFileCss, oldFileCss) {
-    $('link[href="'+oldFileCss+'"]').remove();
-    $('head').append('<link rel="stylesheet" type="text/css" href="' + nameFileCss + '">');
+function changeStyle(nameFileCss) {
+    $.ajax({
+        url: '/escogeestilo?style='+nameFileCss,
+        type: 'GET',
+        success: function (data) {
+            window.location.reload();
+        },
+        
+    })
 }

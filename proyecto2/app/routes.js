@@ -1,30 +1,45 @@
 // app/routes.js
 
-module.exports = function(app, passport) {
+module.exports = function (app, passport) {
 
     // route for home page
-    app.get('/', function(req, res) {
+    app.get('/', function (req, res) {
         res.render('index.twig', {
-            user : req.user // get the user out of session and pass to template
+            user: req.user // get the user out of session and pass to template
         });
     });
 
     // route for showing the profile page
-    app.get('/profile', isLoggedIn, function(req, res) {
+    app.get('/profile', isLoggedIn, function (req, res) {
         res.render('profile.twig', {
-            user : req.user // get the user out of session and pass to template
-        });
-    });
-    
-    // route para menejar los estilos por el usario
-    app.get('/estilo', isLoggedIn, function(req, res) {
-        res.render('estilo.twig', {
-            user : req.user // get the user out of session and pass to template
+            user: req.user // get the user out of session and pass to template
         });
     });
 
+    // route para menejar los estilos por el usario
+    app.get('/estilo', isLoggedIn, function (req, res) {
+        res.render('estilo.twig', {
+            user: req.user // get the user out of session and pass to template
+        });
+    });
+
+    // route para menejar los estilos por el usario
+    app.get('/escogeestilo', isLoggedIn, function (req, res) {
+        var mongoose = require('mongoose');
+        var style = req.param("style");
+        console.log(style);
+
+        //update de l'user
+        var User = mongoose.model('User');
+        User.findOne({"google.id": req.user.google.id}, function (err, object) {
+            object.local.layout = style;
+            object.save();
+        });
+        res.json(style);
+    });
+
     // route for logging out
-    app.get('/logout', function(req, res) {
+    app.get('/logout', function (req, res) {
         req.logout();
         res.redirect('/');
     });
@@ -35,16 +50,16 @@ module.exports = function(app, passport) {
     // =====================================
     // GOOGLE ROUTES =======================
     // =====================================
-        // send to google to do the authentication
+    // send to google to do the authentication
     // profile gets us their basic information including their name
     // email gets their emails
-    app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+    app.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 
     // the callback after google has authenticated the user
     app.get('/auth/google/callback',
             passport.authenticate('google', {
-                successRedirect : '/profile',
-                failureRedirect : '/'
+                successRedirect: '/profile',
+                failureRedirect: '/'
             }));
 };
 
