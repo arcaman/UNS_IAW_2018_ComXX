@@ -33,7 +33,8 @@
                 {% if user is not defined %}
                     Login or Register with:
                     <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google</a>
-                {% else %}    
+                {% else %}
+                    <a href="/profile" class="btn btn-warning btn-sm">Profile User</a>
                     <a href="/logout" class="btn btn-default btn-sm">Logout</a>
 
                 {% endif %}
@@ -65,7 +66,7 @@
                 </div>
             </div>
 
-            <div id="page_principale" class="col-md-8 panel-body">
+            <div id="page_principale" class="col-md-8 panel-body couleur_bootstrap">
                 {% block body %}
 
                 {% endblock %}
