@@ -1,0 +1,2 @@
+db.groupes.insert({"nomGroupe" : "groupe1", "userEvaluateurEnCharge" : "5b1bffac25f41644c6c7be7b"})
+

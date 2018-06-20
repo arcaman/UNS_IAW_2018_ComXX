@@ -75,3 +75,4 @@ function isLoggedIn(req, res, next) {
 }
 
 require('./models/user');
+require('./models/base_donnees');
