@@ -4,17 +4,13 @@ var schema = require('./user');
 var userSchema = schema.User;
 
 const groupeSchema = new mongoose.Schema({
-    
-  id: {
-    type: String,
-    required: true
-  },
+  
   nomGroupe: {
     type: String,
     required: true
   },
   userEvaluateurEnCharge: {
-    type: [userSchema],
+    type: String,
     required: true
   },
 //  personnesDansGroupe: {
@@ -35,21 +31,18 @@ const groupeSchema = new mongoose.Schema({
 
 const personnesDansGroupeSchema = new mongoose.Schema({
   users: {
-    type: [userSchema],
+    type: String,
     required: true
   },
   
   groupes: {
-    type: [groupeSchema],
+    type: String,
     required: true
   }
 });
 
 const gammeDeNotesSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
+  
   nom: {
     type: String,
     required: true
@@ -61,10 +54,6 @@ const gammeDeNotesSchema = new mongoose.Schema({
 });
 
 const tableDeNotesSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
   abreviation: {
     type: String,
     required: true
@@ -82,16 +71,12 @@ const tableDeNotesSchema = new mongoose.Schema({
     required: true
   },
   gammesDeNotes: {
-    type: [gammeDeNotesSchema],
+    type: String,
     required: true
   }
 });
 
 const evaluationSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
   nom: {
     type: String,
     required: true
@@ -109,7 +94,7 @@ const evaluationSchema = new mongoose.Schema({
     required: true
   },
   userAdminCreateur: {
-    type: [userSchema],
+    type: String,
     required: true
   },
 //  groupeEvalue: {
@@ -120,11 +105,11 @@ const evaluationSchema = new mongoose.Schema({
 
 const groupeEvalueSchema = new mongoose.Schema({
   groupes: {
-    type: [groupeSchema],
+    type: String,
     required: true
   },
   evaluations: {
-    type: [evaluationSchema],
+    type: String,
     required: true
   },
   noteGlobale: {
@@ -138,16 +123,12 @@ const groupeEvalueSchema = new mongoose.Schema({
 });
 
 const criteresEvaluationSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
   nomCritere: {
     type: String,
     required: true
   },
   evaluation: {
-    type: [evaluationSchema],
+    type: String,
     required: true
   },
 //  notesCriteresGroupes: {
@@ -158,11 +139,11 @@ const criteresEvaluationSchema = new mongoose.Schema({
 
 const notesCriteresGroupeSchema = new mongoose.Schema({
   groupes: {
-    type: [groupeSchema],
+    type: String,
     required: true
   },
   criteres: {
-    type: [criteresEvaluationSchema],
+    type: String,
     required: true
   },
   noteCritere: {

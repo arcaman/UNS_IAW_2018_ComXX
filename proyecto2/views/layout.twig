@@ -52,10 +52,23 @@
                         </span>
                     </a>
 
-                    <a class="list-group-item" href="evaluation.html">
-                        <span class="couleur_bootstrap">Evaluacion
-                        </span>
-                    </a>
+                    {% if user is not defined %}
+
+                    {% elseif user.local.type_user == "ALUMNO" %}
+
+                        <a class="list-group-item" href="/alumno">
+                            <span class="couleur_bootstrap">Consultacion Evaluacion
+                            </span>
+                        </a>
+
+                    {% elseif user.local.type_user == "EVAL" %}
+
+                        <a class="list-group-item" href="/eval">
+                            <span class="couleur_bootstrap">Gestionar Evaluacion
+                            </span>
+                        </a>
+
+                    {% endif %}
 
                     <a class="list-group-item" href="/estilo">
                         <span class="couleur_bootstrap">Estilos
