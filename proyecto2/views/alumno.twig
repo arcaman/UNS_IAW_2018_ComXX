@@ -41,7 +41,10 @@
                 <tbody>
                     {% for listeEval in listeEvalsParGroupeGeneral[i] %}
                         <tr>
-                            <td>{{ listeEval.groupes }} {{ listeEval.evaluations }}</td>
+                            <td><a class="list-group-item" href="/consultacriteriosalumno?idGroupe={{ listeEval.groupes }}&idEvaluation={{ listeEval.evaluations }}">
+                                    <span class="couleur_bootstrap">Ver detalles criterios
+                                    </span>
+                                </a></td>
                             <td>{{ listeDetailEvalGeneral[indexDetailEval][0].nom }}</td>
                             <td>{{ listeDetailEvalGeneral[indexDetailEval][0].date }}</td>
                             <td>{{ listeDetailEvalGeneral[indexDetailEval][0].description }}</td>

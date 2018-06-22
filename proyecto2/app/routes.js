@@ -42,12 +42,17 @@ module.exports = function (app, passport) {
     // facebook routes
     // twitter routes
 
-    app.get('/alumno', /*isLoggedIn,*/ function (req, res) {
+    app.get('/alumno', isLoggedIn, function (req, res) {
+
+        //verificacion si es un alumno. Si no, error
+        if(req.user.local.type_user != "ALUMNO") {
+            res.status(403).json("El usuario no es un ALUMNO. Prohibido !"); 
+        }
+
         var mongoose = require('mongoose');
-        var style = req.param("style");
         var PersonnesDansGroupe = mongoose.model('PersonnesDansGroupe');
         //recuperer tous les groupes de l'utilisateur
-        PersonnesDansGroupe.find({"users": /*req.user._id*/"5b1c1d897d61014690ea8b31"}, function (err, listeGroupe) {
+        PersonnesDansGroupe.find({"users": req.user._id}, function (err, listeGroupe) {
             // console.log("LISTING DES PERSONNES DANS LES GROUPES");
 
             if (err) {
@@ -155,6 +160,23 @@ module.exports = function (app, passport) {
 
     });
 
+    app.get('/consultacriteriosalumno', /*isLoggedIn,*/ function (req, res) {
+
+        //verificacion si es un alumno. Si no, error
+//        if(req.user.local.type_user != "ALUMNO") {
+//            res.status(403).json("El usuario no es un ALUMNO. Prohibido !"); 
+//        }
+
+        var mongoose = require('mongoose');
+        var idEvaluation = req.param("idEvaluation");
+        var idGroupe = req.param("idGroupe");
+        console.log(idEvaluation);
+        console.log(idGroupe);
+
+        res.render('consultacriteriosalumno.twig', {
+            user: req.user // get the user out of session and pass to template
+        });
+    });
 
     // =====================================
     // GOOGLE ROUTES =======================
