@@ -45,8 +45,8 @@ module.exports = function (app, passport) {
     app.get('/alumno', isLoggedIn, function (req, res) {
 
         //verificacion si es un alumno. Si no, error
-        if(req.user.local.type_user != "ALUMNO") {
-            res.status(403).json("El usuario no es un ALUMNO. Prohibido !"); 
+        if (req.user.local.type_user != "ALUMNO") {
+            res.status(403).json("El usuario no es un ALUMNO. Prohibido !");
         }
 
         var mongoose = require('mongoose');
@@ -160,12 +160,12 @@ module.exports = function (app, passport) {
 
     });
 
-    app.get('/consultacriteriosalumno', /*isLoggedIn,*/ function (req, res) {
+    app.get('/consultacriteriosalumno', isLoggedIn, function (req, res) {
 
         //verificacion si es un alumno. Si no, error
-//        if(req.user.local.type_user != "ALUMNO") {
-//            res.status(403).json("El usuario no es un ALUMNO. Prohibido !"); 
-//        }
+        if (req.user.local.type_user != "ALUMNO") {
+            res.status(403).json("El usuario no es un ALUMNO. Prohibido !");
+        }
 
         var mongoose = require('mongoose');
         var idEvaluation = req.param("idEvaluation");
@@ -173,9 +173,77 @@ module.exports = function (app, passport) {
         console.log(idEvaluation);
         console.log(idGroupe);
 
-        res.render('consultacriteriosalumno.twig', {
-            user: req.user // get the user out of session and pass to template
+        var mongoose = require('mongoose');
+        var Groupe = mongoose.model('Groupe');
+        var Evaluation = mongoose.model('Evaluation');
+        var GroupeEvalue = mongoose.model('GroupeEvalue');
+        var CriteresEvaluation = mongoose.model('CriteresEvaluation');
+        var NotesCriteresGroupe = mongoose.model('NotesCriteresGroupe');
+
+
+        //recuperer les infos du groupe
+        Groupe.find({"_id": idGroupe}, function (err, objGroupe) {
+            if (err) {
+                throw err;
+            }
+            console.log(objGroupe);
+            //recuperer les infos de l evaluation
+            Evaluation.find({"_id": idEvaluation}, function (err, objEvaluation) {
+                console.log(objEvaluation);
+
+                //recuperer les infos du groupe evalue
+                GroupeEvalue.find({"groupes": idGroupe, "evaluations": idEvaluation}, function (err, objGroupeEvalue) {
+                    console.log(objGroupeEvalue);
+
+                    //recuperer les criteres d evaluation de l evaluation
+                    CriteresEvaluation.find({"evaluation": idEvaluation}, function (err, listeCriteres) {
+                        console.log(listeCriteres);
+
+                        //comms est un tableau de hash
+                        var listeNotesCriteresGeneral = [];
+                        var indiceControleRequete = listeCriteres.length;
+                        //pour chaque groupe, recuperer les informations detaillees du groupe (nom et id)
+                        listeCriteres.forEach(function (valeur, indice) {
+                            NotesCriteresGroupe.find({"groupes": idGroupe, "criteres": listeCriteres[indice]._id}, function (err, listeNotesCriteres) {
+                                listeNotesCriteresGeneral[indice] = listeNotesCriteres;
+                                indiceControleRequete--;
+                                //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
+                                if (indiceControleRequete == 0) {
+                                    callbackRequete();
+                                }
+
+                            });
+                        });
+                        function callbackRequete() {
+                            console.log(listeNotesCriteresGeneral);
+
+                            res.render('consultacriteriosalumno.twig', {
+                                user: req.user,
+                                objGroupe: objGroupe,
+                                objEvaluation: objEvaluation,
+                                objGroupeEvalue: objGroupeEvalue,
+                                listeCriteres: listeCriteres,
+                                listeNotesCriteresGeneral: listeNotesCriteresGeneral
+                            });
+
+                        }
+
+
+
+                    });
+
+
+
+                });
+            });
         });
+
+
+
+
+
+
+
     });
 
     // =====================================
