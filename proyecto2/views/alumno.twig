@@ -2,6 +2,68 @@
 
 {% block body %}
     <div id="page_principale" class="col-md-8 panel-body">
-        
+
+        {% set i = 0 %}
+        {% set indexDetailEval = 0 %}
+        {% for detailGroupe in listeDetailGroupeGeneral %}
+
+
+            <table id="membre_{{ detailGroupe[0]._id }}"  class="table table-striped table-bordered table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th>Id grupo</th>
+                        <th>Nombre del grupo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ detailGroupe[0]._id }}</td>
+                        <td>{{ detailGroupe[0].nomGroupe }}</td>
+
+                    </tr>
+                </tbody>
+
+            </table>
+
+
+            <table id="detailEvaluation{{ detailGroupe[0]._id }}"  class="table table-striped table-bordered table-hover dataTable">
+                <thead>
+                    <tr>
+                        <th>Id grupo/Id evaluacion (pour la page suivante</th>
+                        <th>Nombre de la evaluacion</th>
+                        <th>Fecha</th>
+                        <th>Descripcion</th>
+                        <th>Tipo</th>
+                        <th>Nota</th>
+                        <th>Commentario</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for listeEval in listeEvalsParGroupeGeneral[i] %}
+                        <tr>
+                            <td>{{ listeEval.groupes }} {{ listeEval.evaluations }}</td>
+                            <td>{{ listeDetailEvalGeneral[indexDetailEval][0].nom }}</td>
+                            <td>{{ listeDetailEvalGeneral[indexDetailEval][0].date }}</td>
+                            <td>{{ listeDetailEvalGeneral[indexDetailEval][0].description }}</td>
+                            <td>{{ listeDetailEvalGeneral[indexDetailEval][0].type }}</td>
+                            <td>{{ listeEval.noteGlobale }}</td>
+                            <td>{{ listeEval.commentaire }}</td>
+                        </tr>
+
+                        {% set indexDetailEval = indexDetailEval+1 %}
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>            
+
+
+
+
+            {% set i = i+1 %}
+        {% endfor %}
+
     </div>
+
 {% endblock %}

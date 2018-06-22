@@ -42,12 +42,12 @@ module.exports = function (app, passport) {
     // facebook routes
     // twitter routes
 
-    app.get('/alumno', isLoggedIn, function (req, res) {
+    app.get('/alumno', /*isLoggedIn,*/ function (req, res) {
         var mongoose = require('mongoose');
         var style = req.param("style");
         var PersonnesDansGroupe = mongoose.model('PersonnesDansGroupe');
         //recuperer tous les groupes de l'utilisateur
-        PersonnesDansGroupe.find({"users": req.user._id}, function (err, listeGroupe) {
+        PersonnesDansGroupe.find({"users": /*req.user._id*/"5b1c1d897d61014690ea8b31"}, function (err, listeGroupe) {
             // console.log("LISTING DES PERSONNES DANS LES GROUPES");
 
             if (err) {
@@ -141,14 +141,18 @@ module.exports = function (app, passport) {
                     console.log("QUEL EST L ORDRE DE LA LISTE ?");
                     console.log(listeDetailEvalGeneral);
 
+                    res.render('alumno.twig', {
+                        user: req.user, // get the user out of session and pass to template
+                        listeDetailGroupeGeneral: listeDetailGroupeGeneral,
+                        listeEvalsParGroupeGeneral: listeEvalsParGroupeGeneral,
+                        listeDetailEvalGeneral: listeDetailEvalGeneral
+                    });
+
                 }
 
             }
         });
 
-        res.render('alumno.twig', {
-            user: req.user // get the user out of session and pass to template
-        });
     });
 
 
