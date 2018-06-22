@@ -238,14 +238,188 @@ module.exports = function (app, passport) {
             });
         });
 
-
-
-
-
-
-
     });
 
+
+    app.get('/eval', isLoggedIn, function (req, res) {
+
+        //verificacion si es un alumno. Si no, error
+        if (req.user.local.type_user != "EVAL") {
+            res.status(403).json("El usuario no es un EVAL. Prohibido !");
+        }
+
+        var mongoose = require('mongoose');
+        var Groupe = mongoose.model('Groupe');
+        var Evaluation = mongoose.model('Evaluation');
+        var GroupeEvalue = mongoose.model('GroupeEvalue');
+        //recuperer tous les groupes de l'utilisateur EVAL auquel il est assigne
+        Groupe.find({"userEvaluateurEnCharge": req.user._id}, function (err, listeGroupe) {
+            console.log("LISTING DES GROUPES DE L USER EVAL");
+            console.log(listeGroupe);
+
+            if (err) {
+                throw err;
+            }
+
+
+            var listeEvaluationParGroupeGeneral = [];
+            var indiceControleRequete = listeGroupe.length;
+            //pour chaque groupe, recuperer les evaluations associees
+            listeGroupe.forEach(function (valeur, indice) {
+                GroupeEvalue.find({"groupes": listeGroupe[indice]._id}, function (err, listeEvaluationParGroupe) {
+                    listeEvaluationParGroupeGeneral[indice] = listeEvaluationParGroupe;
+                    indiceControleRequete--;
+                    //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
+                    if (indiceControleRequete == 0) {
+                        callbackRequete();
+                    }
+
+                });
+            });
+
+            function callbackRequete() {
+                console.log("LISTE DES EVALUATIONS PAR GROUPE");
+                console.log(listeEvaluationParGroupeGeneral);
+
+                //recuperer le detail de l evaluation (nom, date, type...)
+                //pour avoir le nombre d evals total qu il y a dans toutes les cases du tableau
+                var indiceControleRequeteDetailEvaluation = 0;
+                var listeOrdonneeEval = [];
+                for (var indiceControleGroupe = 0; indiceControleGroupe < listeEvaluationParGroupeGeneral.length; indiceControleGroupe++) {
+                    for (var indiceControleEval = 0; indiceControleEval < listeEvaluationParGroupeGeneral[indiceControleGroupe].length; indiceControleEval++) {
+
+                        listeOrdonneeEval[indiceControleRequeteDetailEvaluation] = listeEvaluationParGroupeGeneral[indiceControleGroupe][indiceControleEval].evaluations;
+                        indiceControleRequeteDetailEvaluation++;
+                    }
+                }
+
+                console.log("CONTENU DE LA LISTE ");
+                console.log(listeOrdonneeEval);
+
+                listeDetailEvalGeneral = [];
+
+                listeOrdonneeEval.forEach(function (valeur, indice) {
+                    Evaluation.find({"_id": listeOrdonneeEval[indice]}, function (err, listeDetailEval) {
+
+
+                        //console.log(listeEvalsParGroupe);
+                        listeDetailEvalGeneral[indice] = listeDetailEval;
+                        indiceControleRequeteDetailEvaluation--;
+                        //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
+                        if (indiceControleRequeteDetailEvaluation == 0) {
+                            callbackRequeteRender();
+                        }
+
+                    });
+                });
+
+                function callbackRequeteRender() {
+                    console.log("QUEL EST L ORDRE DE LA LISTE ?");
+                    console.log(listeDetailEvalGeneral);
+
+                    res.render('eval.twig', {
+                        user: req.user, // get the user out of session and pass to template
+                        listeGroupe: listeGroupe,
+                        listeEvaluationParGroupeGeneral: listeEvaluationParGroupeGeneral,
+                        listeDetailEvalGeneral: listeDetailEvalGeneral
+                        
+                    });
+                }
+            }
+        });
+    });
+    
+    
+    
+    app.get('/modificarevaluacion', /*isLoggedIn,*/ function (req, res) {
+
+        //verificacion si es un alumno. Si no, error
+//        if (req.user.local.type_user != "EVAL") {
+//            res.status(403).json("El usuario no es un EVAL. Prohibido !");
+//        }
+
+        var mongoose = require('mongoose');
+        var idEvaluation = req.param("idEvaluation");
+        var idGroupe = req.param("idGroupe");
+        console.log(idEvaluation);
+        console.log(idGroupe);
+
+        var mongoose = require('mongoose');
+        var Groupe = mongoose.model('Groupe');
+        var Evaluation = mongoose.model('Evaluation');
+        var GroupeEvalue = mongoose.model('GroupeEvalue');
+        var CriteresEvaluation = mongoose.model('CriteresEvaluation');
+        var NotesCriteresGroupe = mongoose.model('NotesCriteresGroupe');
+
+
+        //recuperer les infos du groupe
+        Groupe.find({"_id": idGroupe}, function (err, objGroupe) {
+            if (err) {
+                throw err;
+            }
+            console.log(objGroupe);
+            
+            //verification que l'id de l evaluateur en cours correspond 
+            //à celui qui a été assigné au groupe
+//            if(objGroupe[0].userEvaluateurEnCharge != req.user._id) {
+//                
+//                throw "El usuario EVAL no corresponde con el usuario asignado a la comision. Prohibido !";
+//            }
+            
+            //recuperer les infos de l evaluation
+            Evaluation.find({"_id": idEvaluation}, function (err, objEvaluation) {
+                console.log(objEvaluation);
+
+                //recuperer les infos du groupe evalue
+                GroupeEvalue.find({"groupes": idGroupe, "evaluations": idEvaluation}, function (err, objGroupeEvalue) {
+                    console.log(objGroupeEvalue);
+
+                    //recuperer les criteres d evaluation de l evaluation
+                    CriteresEvaluation.find({"evaluation": idEvaluation}, function (err, listeCriteres) {
+                        console.log(listeCriteres);
+
+                        //comms est un tableau de hash
+                        var listeNotesCriteresGeneral = [];
+                        var indiceControleRequete = listeCriteres.length;
+                        //pour chaque groupe, recuperer les informations detaillees du groupe (nom et id)
+                        listeCriteres.forEach(function (valeur, indice) {
+                            NotesCriteresGroupe.find({"groupes": idGroupe, "criteres": listeCriteres[indice]._id}, function (err, listeNotesCriteres) {
+                                listeNotesCriteresGeneral[indice] = listeNotesCriteres;
+                                indiceControleRequete--;
+                                //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
+                                if (indiceControleRequete == 0) {
+                                    callbackRequete();
+                                }
+
+                            });
+                        });
+                        function callbackRequete() {
+                            console.log(listeNotesCriteresGeneral);
+
+                            res.render('modificarevaluacion.twig', {
+                                user: req.user,
+                                objGroupe: objGroupe,
+                                objEvaluation: objEvaluation,
+                                objGroupeEvalue: objGroupeEvalue,
+                                listeCriteres: listeCriteres,
+                                listeNotesCriteresGeneral: listeNotesCriteresGeneral
+                            });
+
+                        }
+
+
+
+                    });
+
+
+
+                });
+            });
+        });
+
+    });
+    
+    
     // =====================================
     // GOOGLE ROUTES =======================
     // =====================================
