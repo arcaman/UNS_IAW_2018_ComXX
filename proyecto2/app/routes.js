@@ -322,15 +322,15 @@ module.exports = function (app, passport) {
                         listeGroupe: listeGroupe,
                         listeEvaluationParGroupeGeneral: listeEvaluationParGroupeGeneral,
                         listeDetailEvalGeneral: listeDetailEvalGeneral
-                        
+
                     });
                 }
             }
         });
     });
-    
-    
-    
+
+
+
     app.get('/modificarevaluacion', /*isLoggedIn,*/ function (req, res) {
 
         //verificacion si es un alumno. Si no, error
@@ -358,14 +358,14 @@ module.exports = function (app, passport) {
                 throw err;
             }
             console.log(objGroupe);
-            
+
             //verification que l'id de l evaluateur en cours correspond 
             //à celui qui a été assigné au groupe
 //            if(objGroupe[0].userEvaluateurEnCharge != req.user._id) {
 //                
 //                throw "El usuario EVAL no corresponde con el usuario asignado a la comision. Prohibido !";
 //            }
-            
+
             //recuperer les infos de l evaluation
             Evaluation.find({"_id": idEvaluation}, function (err, objEvaluation) {
                 console.log(objEvaluation);
@@ -402,7 +402,10 @@ module.exports = function (app, passport) {
                                 objEvaluation: objEvaluation,
                                 objGroupeEvalue: objGroupeEvalue,
                                 listeCriteres: listeCriteres,
-                                listeNotesCriteresGeneral: listeNotesCriteresGeneral
+                                listeNotesCriteresGeneral: listeNotesCriteresGeneral,
+                                idEvaluation: idEvaluation,
+                                idGroupe: idGroupe
+
                             });
 
                         }
@@ -418,8 +421,63 @@ module.exports = function (app, passport) {
         });
 
     });
-    
-    
+
+    // route para menejar los estilos por el usario
+    app.get('/cambiarEvaluacionGlobal', /*isLoggedIn,*/ function (req, res) {
+        var mongoose = require('mongoose');
+        var idEvaluation = req.param("idEvaluation");
+        var idGroupe = req.param("idGroupe");
+        var noteGlobaleEvaluation = req.param("noteGlobaleEvaluation");
+        var commentaireGlobalEvaluation = req.param("commentaireGlobalEvaluation");
+        
+        if(noteGlobaleEvaluation < 0 || noteGlobaleEvaluation > 5) {
+            throw "el valor de la nota esta incorrecta !!";
+        }
+        
+//        console.log(idEvaluation);
+//        console.log(idGroupe);
+//        console.log(noteGlobaleEvaluation);
+//        console.log(commentaireGlobalEvaluation);
+        
+        var GroupeEvalue = mongoose.model('GroupeEvalue');
+        var CriteresEvaluation = mongoose.model('CriteresEvaluation');
+        var NotesCriteresGroupe = mongoose.model('NotesCriteresGroupe');
+        
+        
+        GroupeEvalue.findOne({"groupes": idGroupe, "evaluations": idEvaluation}, function (err, object) {
+            
+            object.noteGlobale = noteGlobaleEvaluation;
+            object.commentaire = commentaireGlobalEvaluation;
+            object.save();
+            
+            CriteresEvaluation.find({"evaluation": idEvaluation}, function (err, objectCriteres) {
+                indiceControleRequete = objectCriteres.length;
+                objectCriteres.forEach(function (valeur, indice) {
+                    NotesCriteresGroupe.findOne({"groupes": idGroupe, "criteres": objectCriteres[indice]._id}, function (err, objectNoteCritere) {
+                        objectNoteCritere.noteCritere = noteGlobaleEvaluation;
+                        objectNoteCritere.save();
+                        
+                        indiceControleRequete--;
+                        //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
+                        if (indiceControleRequete == 0) {
+                            callbackRequeteRender();
+                        }
+                    });
+                    
+                });
+                
+            });
+            
+        });
+        
+        
+        function callbackRequeteRender() {
+            res.json(idEvaluation);
+        }
+    });
+
+
+
     // =====================================
     // GOOGLE ROUTES =======================
     // =====================================

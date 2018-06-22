@@ -87,11 +87,33 @@ function loadCss(xml) {
 
 function changeStyle(nameFileCss) {
     $.ajax({
-        url: '/escogeestilo?style='+nameFileCss,
+        url: '/escogeestilo?style=' + nameFileCss,
         type: 'GET',
         success: function (data) {
             window.location.reload();
         },
-        
+
+    })
+}
+
+function validerNoteGlobaleEvaluation(idGroupe, idEvaluation) {
+
+    var noteGlobaleEvaluation = $("#noteGlobaleEvaluation").val();
+    var commentaireGlobalEvaluation = $("#commentaireGlobalEvaluation").val();
+
+//    alert("idGroupe = " + idGroupe + " et idEvaluation = " + idEvaluation
+//            + " et la noteGlobale = " + noteGlobaleEvaluation + " et le commentaire laisse = " +
+//            commentaireGlobalEvaluation);
+    
+    $.ajax({
+        url: '/cambiarEvaluacionGlobal?idGroupe=' + idGroupe + "&idEvaluation=" 
+                + idEvaluation + "&noteGlobaleEvaluation=" 
+                + noteGlobaleEvaluation + "&commentaireGlobalEvaluation=" 
+                + commentaireGlobalEvaluation ,
+        type: 'GET',
+        success: function (data) {
+            window.location.reload();
+        },
+
     })
 }

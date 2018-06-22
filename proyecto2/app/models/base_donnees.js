@@ -118,7 +118,7 @@ const groupeEvalueSchema = new mongoose.Schema({
   },
   commentaire: {
     type: String,
-    required: true
+    required: false
   }
 });
 
@@ -152,7 +152,7 @@ const notesCriteresGroupeSchema = new mongoose.Schema({
   },
   commentaire: {
     type: String,
-    required: true
+    required: false
   }
   
 });
