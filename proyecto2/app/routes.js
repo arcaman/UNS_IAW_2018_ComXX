@@ -331,12 +331,12 @@ module.exports = function (app, passport) {
 
 
 
-    app.get('/modificarevaluacion', /*isLoggedIn,*/ function (req, res) {
+    app.get('/modificarevaluacion', isLoggedIn, function (req, res) {
 
-        //verificacion si es un alumno. Si no, error
-//        if (req.user.local.type_user != "EVAL") {
-//            res.status(403).json("El usuario no es un EVAL. Prohibido !");
-//        }
+        //verificacion si es un alumno. Si no, error 
+        if (req.user.local.type_user != "EVAL") {
+            res.status(403).json("El usuario no es un EVAL. Prohibido !");
+        }
 
         var mongoose = require('mongoose');
         var idEvaluation = req.param("idEvaluation");
@@ -360,11 +360,11 @@ module.exports = function (app, passport) {
             console.log(objGroupe);
 
             //verification que l'id de l evaluateur en cours correspond 
-            //à celui qui a été assigné au groupe
-//            if(objGroupe[0].userEvaluateurEnCharge != req.user._id) {
-//                
-//                throw "El usuario EVAL no corresponde con el usuario asignado a la comision. Prohibido !";
-//            }
+            //à celui qui a été assigné au groupe 
+            if(objGroupe[0].userEvaluateurEnCharge != req.user._id) {
+                
+                throw "El usuario EVAL no corresponde con el usuario asignado a la comision. Prohibido !";
+            }
 
             //recuperer les infos de l evaluation
             Evaluation.find({"_id": idEvaluation}, function (err, objEvaluation) {
@@ -380,6 +380,7 @@ module.exports = function (app, passport) {
 
                         //comms est un tableau de hash
                         var listeNotesCriteresGeneral = [];
+                        var nbCriteres = listeCriteres.length;
                         var indiceControleRequete = listeCriteres.length;
                         //pour chaque groupe, recuperer les informations detaillees du groupe (nom et id)
                         listeCriteres.forEach(function (valeur, indice) {
@@ -404,7 +405,8 @@ module.exports = function (app, passport) {
                                 listeCriteres: listeCriteres,
                                 listeNotesCriteresGeneral: listeNotesCriteresGeneral,
                                 idEvaluation: idEvaluation,
-                                idGroupe: idGroupe
+                                idGroupe: idGroupe,
+                                nbCriteres: nbCriteres
 
                             });
 
@@ -423,60 +425,130 @@ module.exports = function (app, passport) {
     });
 
     // route para menejar los estilos por el usario
-    app.get('/cambiarEvaluacionGlobal', /*isLoggedIn,*/ function (req, res) {
+    app.get('/cambiarEvaluacionGlobal', isLoggedIn, function (req, res) {
         var mongoose = require('mongoose');
         var idEvaluation = req.param("idEvaluation");
         var idGroupe = req.param("idGroupe");
         var noteGlobaleEvaluation = req.param("noteGlobaleEvaluation");
         var commentaireGlobalEvaluation = req.param("commentaireGlobalEvaluation");
-        
-        if(noteGlobaleEvaluation < 0 || noteGlobaleEvaluation > 5) {
+
+        if (noteGlobaleEvaluation < 0 || noteGlobaleEvaluation > 5) {
             throw "el valor de la nota esta incorrecta !!";
         }
-        
+
 //        console.log(idEvaluation);
 //        console.log(idGroupe);
 //        console.log(noteGlobaleEvaluation);
 //        console.log(commentaireGlobalEvaluation);
-        
+
         var GroupeEvalue = mongoose.model('GroupeEvalue');
         var CriteresEvaluation = mongoose.model('CriteresEvaluation');
         var NotesCriteresGroupe = mongoose.model('NotesCriteresGroupe');
-        
-        
+
+
         GroupeEvalue.findOne({"groupes": idGroupe, "evaluations": idEvaluation}, function (err, object) {
-            
+
             object.noteGlobale = noteGlobaleEvaluation;
             object.commentaire = commentaireGlobalEvaluation;
             object.save();
-            
+
             CriteresEvaluation.find({"evaluation": idEvaluation}, function (err, objectCriteres) {
                 indiceControleRequete = objectCriteres.length;
                 objectCriteres.forEach(function (valeur, indice) {
                     NotesCriteresGroupe.findOne({"groupes": idGroupe, "criteres": objectCriteres[indice]._id}, function (err, objectNoteCritere) {
                         objectNoteCritere.noteCritere = noteGlobaleEvaluation;
                         objectNoteCritere.save();
-                        
+
                         indiceControleRequete--;
                         //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
                         if (indiceControleRequete == 0) {
                             callbackRequeteRender();
                         }
                     });
-                    
+
                 });
-                
+
             });
-            
+
         });
-        
-        
+
+
         function callbackRequeteRender() {
             res.json(idEvaluation);
         }
     });
 
 
+
+// route para menejar los estilos por el usario
+    app.post('/cambiarCriteriosEvaluacion', isLoggedIn, function (req, res) {
+
+        var mongoose = require('mongoose');
+        var NotesCriteresGroupe = mongoose.model('NotesCriteresGroupe');
+        var nbCriteres = req.param('nbCriteres', null);
+        var idGroupe = req.param('idGroupe', null);
+        var idEvaluation = req.param('idEvaluation', null);
+
+        var indiceControleRequete = nbCriteres;
+
+        //check noteCriteres bien dans la gamme de notes
+        var noteCritereVerificationIntervale = 0;
+        //valeur moyenne a calculer pour la mettre sur l eval global
+        var valeurMoyenneCriteres = 0;
+        for (var i = 0; i < nbCriteres; i++) {
+            noteCritereVerificationIntervale = parseInt(req.param('noteCritere_' + i, null));
+            if (noteCritereVerificationIntervale < 0 || noteCritereVerificationIntervale > 5) {
+                throw "el valor de la nota esta incorrecta !!";
+            }
+            valeurMoyenneCriteres = valeurMoyenneCriteres + noteCritereVerificationIntervale;
+        }
+
+        valeurMoyenneCriteres = (valeurMoyenneCriteres / nbCriteres).toFixed(2);
+        //console.log("VALEUR MOYENNE DES CRITERES = " + valeurMoyenneCriteres);
+
+        var idCritere = [];
+        var commentaireCritere = [];
+        var noteCritere = [];
+        for (var i = 0; i < nbCriteres; i++) {
+            idCritere[i] = req.param('idCritere_' + i, null);
+            commentaireCritere[i] = req.param('commentaireCritere_' + i, null);
+            noteCritere[i] = req.param('noteCritere_' + i, null);
+        }
+
+        //boucle sur tous les criteres
+        idCritere.forEach(function (valeur, indice) {
+            //assignation des donnees a notes criteres
+            NotesCriteresGroupe.findOne({"groupes": idGroupe, "criteres": idCritere[indice]}, function (err, objectNoteCritere) {
+
+                objectNoteCritere.noteCritere = noteCritere[indice];
+                objectNoteCritere.commentaire = commentaireCritere[indice];
+                objectNoteCritere.save();
+
+                indiceControleRequete--;
+                //attendre qu'on ai bien tout recupere pour sortir de la boucle avec les donnees
+                if (indiceControleRequete == 0) {
+                    callbackRequete();
+                }
+            });
+        });
+
+        function callbackRequete() {
+
+            var GroupeEvalue = mongoose.model('GroupeEvalue');
+            GroupeEvalue.findOne({"groupes": idGroupe, "evaluations": idEvaluation}, function (err, objectGroupeEvalue) {
+
+                objectGroupeEvalue.noteGlobale = valeurMoyenneCriteres;
+                objectGroupeEvalue.save();
+
+                callbackRequeteRender();
+            });
+        }
+
+        function callbackRequeteRender() {
+            res.json(idEvaluation);
+        }
+
+    });
 
     // =====================================
     // GOOGLE ROUTES =======================

@@ -104,16 +104,30 @@ function validerNoteGlobaleEvaluation(idGroupe, idEvaluation) {
 //    alert("idGroupe = " + idGroupe + " et idEvaluation = " + idEvaluation
 //            + " et la noteGlobale = " + noteGlobaleEvaluation + " et le commentaire laisse = " +
 //            commentaireGlobalEvaluation);
-    
+
     $.ajax({
-        url: '/cambiarEvaluacionGlobal?idGroupe=' + idGroupe + "&idEvaluation=" 
-                + idEvaluation + "&noteGlobaleEvaluation=" 
-                + noteGlobaleEvaluation + "&commentaireGlobalEvaluation=" 
-                + commentaireGlobalEvaluation ,
+        url: '/cambiarEvaluacionGlobal?idGroupe=' + idGroupe + "&idEvaluation="
+                + idEvaluation + "&noteGlobaleEvaluation="
+                + noteGlobaleEvaluation + "&commentaireGlobalEvaluation="
+                + commentaireGlobalEvaluation,
         type: 'GET',
         success: function (data) {
             window.location.reload();
         },
 
     })
+}
+
+function validerCriteresEvaluation() {
+
+    $.ajax({
+        url: '/cambiarCriteriosEvaluacion',
+        type: "POST",
+        data: $("#formulaireCriteresEvaluation").serialize(),
+        success: function (data) {
+            window.location.reload();
+        },
+
+    })
+
 }
