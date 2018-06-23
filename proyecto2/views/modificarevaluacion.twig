@@ -26,12 +26,14 @@
                     </td>
                 </tr>
 
-                <tr>
-                    <td colspan="3" style="text-align:center;">
-                        <span class="btn btn-success" onclick="validerNoteGlobaleEvaluation('{{ idGroupe }}', '{{ idEvaluation }}')" >Validar nota global</span>
-                    </td>
-                </tr>
+                {% if assignationPossibleDesNotes == 1 %}
+                    <tr>
+                        <td colspan="3" style="text-align:center;">
+                            <span class="btn btn-success" onclick="validerNoteGlobaleEvaluation('{{ idGroupe }}', '{{ idEvaluation }}')" >Validar nota global</span>
+                        </td>
+                    </tr>
 
+                {% endif %}
 
             </tbody>
         </table>
@@ -80,7 +82,10 @@
                             <input id="nbCriteres" name="nbCriteres" type="hidden" value="{{ nbCriteres }}">
                             <input id="idGroupe" name="idGroupe" type="hidden" value="{{ idGroupe }}">
                             <input id="idEvaluation" name="idEvaluation" type="hidden" value="{{ idEvaluation }}">
-                            <span class="btn btn-success" onclick="validerCriteresEvaluation()" >Validar criterios</span>
+
+                            {% if assignationPossibleDesNotes == 1 %}
+                                <span class="btn btn-success" onclick="validerCriteresEvaluation()" >Validar criterios</span>
+                            {% endif %}
                         </td>
                     </tr>
 

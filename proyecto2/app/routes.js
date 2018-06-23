@@ -362,13 +362,21 @@ module.exports = function (app, passport) {
             //verification que l'id de l evaluateur en cours correspond 
             //à celui qui a été assigné au groupe 
             if(objGroupe[0].userEvaluateurEnCharge != req.user._id) {
-                
+
                 throw "El usuario EVAL no corresponde con el usuario asignado a la comision. Prohibido !";
             }
 
             //recuperer les infos de l evaluation
             Evaluation.find({"_id": idEvaluation}, function (err, objEvaluation) {
                 console.log(objEvaluation);
+
+                //verification que la date du projet est inferieure a la date actuelle
+                var assignationPossibleDesNotes = 0;
+                var dateDuProjet = Date.parse(objEvaluation[0].date);
+                var dateActuelle = Date.now();
+                if (dateDuProjet <= dateActuelle) {
+                    assignationPossibleDesNotes = 1;
+                }
 
                 //recuperer les infos du groupe evalue
                 GroupeEvalue.find({"groupes": idGroupe, "evaluations": idEvaluation}, function (err, objGroupeEvalue) {
@@ -406,7 +414,8 @@ module.exports = function (app, passport) {
                                 listeNotesCriteresGeneral: listeNotesCriteresGeneral,
                                 idEvaluation: idEvaluation,
                                 idGroupe: idGroupe,
-                                nbCriteres: nbCriteres
+                                nbCriteres: nbCriteres,
+                                assignationPossibleDesNotes: assignationPossibleDesNotes
 
                             });
 
